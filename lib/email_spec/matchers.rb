@@ -1,5 +1,6 @@
 module EmailSpec
   module Matchers
+
     class ReplyTo
       def initialize(email)
         @expected_reply_to = TMail::Address.parse(email)
@@ -77,11 +78,11 @@ module EmailSpec
 
       def matches?(email)
         @email = email
-        @actual_sender = (email.from_addrs || []).first
+        addrs = email.header[:from] ? email.header[:from].addrs : email.from_addrs
+        @actual_sender = (addrs || []).first
 
         !@actual_sender.nil? &&
-          @actual_sender.address == @expected_sender.address &&
-          @actual_sender.name == @expected_sender.name
+          @actual_sender.to_s == @expected_sender.to_s
       end
 
       def failure_message
